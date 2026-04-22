@@ -223,4 +223,4 @@ php -S 127.0.0.1:8002 -t public
 
 ## Lizenz
 
-Noch keine Lizenz gesetzt. Vor einer Veroeffentlichung auf GitHub sollte eine passende `LICENSE`-Datei ergaenzt werden.
+GNU General Public License (GPL)
