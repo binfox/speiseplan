@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Milchreis mit Kirschen">
+  <rect width="900" height="600" fill="#fff7fb"/>
+  <ellipse cx="450" cy="350" rx="250" ry="145" fill="#c8b7df"/>
+  <ellipse cx="450" cy="322" rx="215" ry="110" fill="#fffaf1"/>
+  <g fill="#d9674f">
+    <circle cx="360" cy="285" r="25"/><circle cx="430" cy="360" r="24"/><circle cx="535" cy="300" r="28"/><circle cx="575" cy="372" r="22"/>
+  </g>
+  <g stroke="#5f9f7a" stroke-width="8" fill="none" stroke-linecap="round">
+    <path d="M360 262c8-24 25-38 50-42"/>
+    <path d="M535 273c9-30 32-42 58-45"/>
+  </g>
+  <g fill="#f5dc83">
+    <rect x="320" y="398" width="240" height="12" rx="6" transform="rotate(-8 440 404)"/>
+    <rect x="360" y="420" width="185" height="12" rx="6" transform="rotate(7 452 426)"/>
+  </g>
+  <text x="450" y="92" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="48" font-weight="800" fill="#3f342b">Milchreis mit Kirschen</text>
+</svg>

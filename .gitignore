@@ -1,0 +1,9 @@
+config/config.php
+storage/uploads/recipes/*
+!storage/uploads/recipes/.gitkeep
+!storage/uploads/recipes/1/
+!storage/uploads/recipes/1/demo-*.svg
+
+*.log
+.DS_Store
+Thumbs.db

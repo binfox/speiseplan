@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Reis mit Erbsen und Ruehrei">
+  <rect width="900" height="600" fill="#f4fbef"/>
+  <ellipse cx="450" cy="338" rx="250" ry="165" fill="#9fc7e8"/>
+  <ellipse cx="450" cy="318" rx="210" ry="128" fill="#fffaf1"/>
+  <g fill="#f5dc83">
+    <path d="M300 302c38-34 103-25 129 18-35 36-104 29-129-18z"/>
+    <path d="M470 258c45-20 95 4 108 51-43 23-98-1-108-51z"/>
+    <path d="M415 380c48-24 112-1 129 47-56 20-105 8-129-47z"/>
+  </g>
+  <g fill="#5f9f7a">
+    <circle cx="355" cy="378" r="18"/><circle cx="560" cy="358" r="17"/><circle cx="500" cy="416" r="15"/><circle cx="620" cy="310" r="14"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="382" cy="262" r="9"/><circle cx="430" cy="288" r="8"/><circle cx="515" cy="315" r="9"/><circle cx="590" cy="390" r="8"/>
+  </g>
+  <text x="450" y="92" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="44" font-weight="800" fill="#3f342b">Reis, Erbsen &amp; Ruehrei</text>
+</svg>

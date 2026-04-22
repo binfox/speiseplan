@@ -1,0 +1,147 @@
+USE speiseplan;
+
+INSERT INTO families (id, name) VALUES (1, 'Demo-Familie')
+ON DUPLICATE KEY UPDATE name = VALUES(name);
+
+INSERT INTO users (id, name, email, password_hash) VALUES
+(1, 'Demo', 'demo@example.test', '$2y$12$7lxBxNm8ANHM6trXND7pdel8kZkgdEyB6bE7eegEVjAD7b.LNuFFW')
+ON DUPLICATE KEY UPDATE name = VALUES(name), password_hash = VALUES(password_hash);
+
+INSERT IGNORE INTO family_members (family_id, user_id, role) VALUES (1, 1, 'admin');
+
+INSERT INTO invite_codes (family_id, code, created_by, max_uses) VALUES (1, 'FAMILIE2026', 1, NULL)
+ON DUPLICATE KEY UPDATE family_id = VALUES(family_id);
+
+INSERT INTO recipes
+(id, family_id, title, description, category, meal_type, duration_minutes, servings, ingredients, steps, created_by)
+VALUES
+(1, 1, 'Spaghetti Bolognese', 'Klassiker fuer die ganze Familie.', 'Pasta', 'mittag,abend', 35, 4,
+ JSON_ARRAY('500 g Spaghetti', '400 g Hackfleisch oder veganes Hack', '1 Dose Tomaten', '1 Zwiebel', '1 Karotte', 'Italienische Kraeuter'),
+ JSON_ARRAY('Zwiebel und Karotte wuerfeln.', 'Hack anbraten und Gemuese zugeben.', 'Tomaten und Gewuerze einruehren.', 'Nudeln kochen und mit Sauce servieren.'), 1),
+(2, 1, 'Kartoffelsuppe', 'Saettigende Suppe mit viel Gemuese.', 'Suppe', 'mittag,abend', 40, 4,
+ JSON_ARRAY('800 g Kartoffeln', '2 Moehren', '1 Stange Lauch', '1 l Bruehe', 'Petersilie', 'Optional Wuerstchen'),
+ JSON_ARRAY('Gemuese klein schneiden.', 'In Bruehe weich kochen.', 'Teilweise puerieren.', 'Mit Petersilie und optional Wuerstchen servieren.'), 1),
+(3, 1, 'Pfannkuchen', 'Schnell, suess oder herzhaft belegbar.', 'Schnell', 'mittag,abend', 25, 4,
+ JSON_ARRAY('300 g Mehl', '500 ml Milch', '3 Eier', 'Prise Salz', 'Oel zum Braten'),
+ JSON_ARRAY('Teig glatt ruehren.', 'Kurz quellen lassen.', 'Duenne Pfannkuchen ausbacken.', 'Nach Wunsch fuellen.'), 1),
+(4, 1, 'Chili sin carne', 'Wuerziges Chili mit Bohnen und Mais.', 'Vegetarisch', 'mittag,abend', 35, 4,
+ JSON_ARRAY('2 Dosen Bohnen', '1 Dose Mais', '1 Dose Tomaten', '1 Paprika', '1 Zwiebel', 'Chili und Kreuzkuemmel'),
+ JSON_ARRAY('Zwiebel und Paprika anbraten.', 'Bohnen, Mais und Tomaten zugeben.', 'Wuerzen und koecheln lassen.', 'Mit Reis oder Brot servieren.'), 1),
+(5, 1, 'Ofengemuese mit Feta', 'Blechgericht mit wenig Aufwand.', 'Ofen', 'mittag,abend', 45, 4,
+ JSON_ARRAY('Kartoffeln', 'Zucchini', 'Paprika', 'Moehren', 'Feta', 'Olivenoel', 'Kraeuter'),
+ JSON_ARRAY('Gemuese in Stuecke schneiden.', 'Mit Oel und Kraeutern mischen.', 'Feta darauf verteilen.', 'Im Ofen goldbraun backen.'), 1),
+(6, 1, 'Haehnchen-Reis-Pfanne', 'Eine einfache Pfanne fuer Werktage.', 'Pfanne', 'mittag,abend', 30, 4,
+ JSON_ARRAY('400 g Haehnchenbrust', '250 g Reis', '1 Paprika', 'Erbsen', 'Bruehe', 'Paprikapulver'),
+ JSON_ARRAY('Reis vorkochen.', 'Haehnchen anbraten.', 'Gemuese zugeben.', 'Reis untermischen und abschmecken.'), 1),
+(7, 1, 'Linseneintopf', 'Deftig und gut vorzubereiten.', 'Eintopf', 'mittag,abend', 50, 4,
+ JSON_ARRAY('250 g Linsen', 'Suppengemuese', 'Kartoffeln', 'Bruehe', 'Essig', 'Lorbeer'),
+ JSON_ARRAY('Gemuese wuerfeln.', 'Mit Linsen und Bruehe kochen.', 'Mit Essig abschmecken.', 'Warm servieren.'), 1),
+(8, 1, 'Wraps', 'Jeder belegt selbst am Tisch.', 'Schnell', 'mittag,abend', 20, 4,
+ JSON_ARRAY('8 Tortillas', 'Salat', 'Tomaten', 'Gurke', 'Kaese', 'Joghurt-Sauce', 'Optional Haehnchen'),
+ JSON_ARRAY('Zutaten schneiden.', 'Tortillas erwaermen.', 'Alles bereitstellen.', 'Wraps am Tisch fuellen.'), 1),
+(9, 1, 'Nudelauflauf', 'Cremiger Auflauf mit Gemuese.', 'Ofen', 'mittag,abend', 45, 4,
+ JSON_ARRAY('400 g Nudeln', 'Brokkoli', 'Sahne oder Milch', 'Kaese', 'Gewuerze'),
+ JSON_ARRAY('Nudeln kurz vorkochen.', 'Mit Gemuese und Sauce mischen.', 'Mit Kaese bestreuen.', 'Im Ofen backen.'), 1),
+(10, 1, 'Tomatensuppe', 'Schnelle Suppe mit Brot.', 'Suppe', 'mittag,abend', 25, 4,
+ JSON_ARRAY('2 Dosen Tomaten', '1 Zwiebel', 'Bruehe', 'Basilikum', 'Sahne optional'),
+ JSON_ARRAY('Zwiebel anbraten.', 'Tomaten und Bruehe zugeben.', 'Puerieren und abschmecken.', 'Mit Brot servieren.'), 1),
+(11, 1, 'Fischstaebchen mit Kartoffeln', 'Einfaches Familienessen.', 'Schnell', 'mittag,abend', 30, 4,
+ JSON_ARRAY('Fischstaebchen', 'Kartoffeln', 'Gurke', 'Joghurt', 'Dill'),
+ JSON_ARRAY('Kartoffeln kochen.', 'Fischstaebchen backen oder braten.', 'Gurkensalat ruehren.', 'Alles zusammen servieren.'), 1),
+(12, 1, 'Gemuese-Curry', 'Mildes Curry mit Reis.', 'Vegetarisch', 'mittag,abend', 35, 4,
+ JSON_ARRAY('Gemischtes Gemuese', 'Kokosmilch', 'Currypaste mild', 'Reis', 'Kichererbsen'),
+ JSON_ARRAY('Reis kochen.', 'Gemuese anbraten.', 'Kokosmilch und Currypaste zugeben.', 'Kichererbsen erwaermen und servieren.'), 1),
+(13, 1, 'Kaiserschmarrn mit Apfelmus', 'Suesse Hauptmahlzeit fuer schnelle Familientage.', 'Schnell', 'mittag,abend', 25, 4,
+ JSON_ARRAY('4 Eier', '250 g Mehl', '350 ml Milch', '1 EL Zucker', 'Butter', 'Apfelmus'),
+ JSON_ARRAY('Eier trennen und Eiweiss steif schlagen.', 'Mehl, Milch, Zucker und Eigelb verruehren.', 'Eischnee unterheben und in Butter backen.', 'Zerreissen und mit Apfelmus servieren.'), 1),
+(14, 1, 'Hackbaellchen in Tomatensauce', 'Gut vorzubereiten und beliebt mit Nudeln oder Reis.', 'Pfanne', 'mittag,abend', 40, 4,
+ JSON_ARRAY('500 g Hackfleisch oder veganes Hack', '1 Ei', 'Semmelbroesel', '1 Dose Tomaten', '1 Zwiebel', 'Basilikum'),
+ JSON_ARRAY('Hack mit Ei und Semmelbroeseln verkneten.', 'Kleine Baellchen formen und anbraten.', 'Tomatensauce kochen.', 'Baellchen in der Sauce gar ziehen lassen.'), 1),
+(15, 1, 'Brokkoli-Kaese-Suppe', 'Cremige Suppe mit Brot oder Crostini.', 'Suppe', 'mittag,abend', 30, 4,
+ JSON_ARRAY('500 g Brokkoli', '2 Kartoffeln', '900 ml Bruehe', '150 g Frischkaese', 'Geriebener Kaese', 'Muskat'),
+ JSON_ARRAY('Brokkoli und Kartoffeln schneiden.', 'In Bruehe weich kochen.', 'Frischkaese einruehren und puerieren.', 'Mit Kaese und Muskat abschmecken.'), 1),
+(16, 1, 'Pizzaschnecken', 'Praktisch fuer Abendbrot, Ausflug oder Reste.', 'Ofen', 'mittag,abend', 35, 4,
+ JSON_ARRAY('1 Rolle Pizzateig', 'Tomatensauce', 'Kaese', 'Mais', 'Paprika', 'Optional Salami oder Schinken'),
+ JSON_ARRAY('Teig ausrollen und mit Sauce bestreichen.', 'Belag und Kaese verteilen.', 'Aufrollen und in Scheiben schneiden.', 'Goldbraun backen.'), 1),
+(17, 1, 'Milchreis mit Kirschen', 'Warmes Wohlfuehlessen mit wenigen Zutaten.', 'Schnell', 'mittag,abend', 35, 4,
+ JSON_ARRAY('250 g Milchreis', '1 l Milch', '2 EL Zucker', 'Vanille', '1 Glas Kirschen', 'Zimt'),
+ JSON_ARRAY('Milch mit Zucker und Vanille aufkochen.', 'Milchreis einruehren und quellen lassen.', 'Kirschen erwaermen.', 'Mit Zimt servieren.'), 1),
+(18, 1, 'Bunte Quesadillas', 'Knusprige Tortillas mit Kaese und Gemuese.', 'Schnell', 'mittag,abend', 20, 4,
+ JSON_ARRAY('8 Tortillas', 'Geriebener Kaese', 'Paprika', 'Mais', 'Fruehlingszwiebeln', 'Salsa'),
+ JSON_ARRAY('Gemuese klein schneiden.', 'Tortillas mit Kaese und Gemuese belegen.', 'Zusammenklappen und in der Pfanne roesten.', 'Mit Salsa servieren.'), 1),
+(19, 1, 'Gnocchi mit Spinat-Sahne', 'Cremiges Pfannengericht in kurzer Zeit.', 'Pfanne', 'mittag,abend', 25, 4,
+ JSON_ARRAY('800 g Gnocchi', '300 g Spinat', '1 Zwiebel', '200 ml Sahne', 'Parmesan', 'Muskat'),
+ JSON_ARRAY('Zwiebel anbraten.', 'Gnocchi zugeben und leicht roesten.', 'Spinat und Sahne einruehren.', 'Mit Parmesan abschmecken.'), 1),
+(20, 1, 'Reis mit Erbsen und Ruehrei', 'Einfaches Restegericht nach Art einer schnellen Reispfanne.', 'Pfanne', 'mittag,abend', 25, 4,
+ JSON_ARRAY('250 g Reis', '3 Eier', 'Erbsen', 'Moehren', 'Sojasauce', 'Sesamoel optional'),
+ JSON_ARRAY('Reis kochen oder Reste nutzen.', 'Gemuese anbraten.', 'Eier als Ruehrei stocken lassen.', 'Reis untermischen und wuerzen.'), 1),
+(21, 1, 'Tortellini-Salat', 'Kalter oder lauwarmer Salat fuer Abendbrot und Sommer.', 'Salat', 'mittag,abend', 25, 4,
+ JSON_ARRAY('500 g Tortellini', 'Tomaten', 'Rucola', 'Mozzarella', 'Pesto', 'Gurke'),
+ JSON_ARRAY('Tortellini kochen und abkuehlen lassen.', 'Gemuese schneiden.', 'Alles mit Pesto mischen.', 'Mit Mozzarella servieren.'), 1),
+(22, 1, 'Bauernfruehstueck', 'Herzhafte Kartoffel-Eier-Pfanne.', 'Pfanne', 'mittag,abend', 30, 4,
+ JSON_ARRAY('600 g gekochte Kartoffeln', '5 Eier', 'Zwiebel', 'Gurken', 'Optional Speck', 'Schnittlauch'),
+ JSON_ARRAY('Kartoffeln in Scheiben schneiden.', 'Mit Zwiebel anbraten.', 'Eier verquirlen und stocken lassen.', 'Mit Gurken und Schnittlauch servieren.'), 1),
+(23, 1, 'Kichererbsen-Feta-Bowl', 'Frische Bowl mit Reis, Gemuese und Joghurtsauce.', 'Vegetarisch', 'mittag,abend', 30, 4,
+ JSON_ARRAY('Reis oder Bulgur', '1 Dose Kichererbsen', 'Gurke', 'Tomaten', 'Feta', 'Joghurt', 'Zitrone'),
+ JSON_ARRAY('Reis oder Bulgur kochen.', 'Kichererbsen wuerzen und anroesten.', 'Gemuese schneiden.', 'Alles mit Feta und Joghurtsauce anrichten.'), 1),
+(24, 1, 'Schupfnudel-Gemuese-Pfanne', 'Schnell aus der Pfanne mit Kraeuterdip.', 'Pfanne', 'mittag,abend', 25, 4,
+ JSON_ARRAY('800 g Schupfnudeln', 'Zucchini', 'Paprika', 'Champignons', 'Kraeuterquark', 'Oel'),
+ JSON_ARRAY('Gemuese klein schneiden.', 'Schupfnudeln goldbraun braten.', 'Gemuese mitbraten.', 'Mit Kraeuterquark servieren.'), 1),
+(25, 1, 'Lasagnesuppe', 'Lasagnegeschmack als unkomplizierte Suppe.', 'Suppe', 'mittag,abend', 35, 4,
+ JSON_ARRAY('Hack oder veganes Hack', 'Lasagneplatten', 'Passierte Tomaten', 'Bruehe', 'Frischkaese', 'Italienische Kraeuter'),
+ JSON_ARRAY('Hack anbraten.', 'Tomaten, Bruehe und Kraeuter zugeben.', 'Lasagneplatten in Stuecke brechen und garen.', 'Frischkaese einruehren.'), 1),
+(26, 1, 'Haehnchen-Wrap-Salat', 'Saettigender Salat mit knusprigen Tortilla-Streifen.', 'Salat', 'mittag,abend', 30, 4,
+ JSON_ARRAY('Haehnchen oder Tofu', 'Salat', 'Mais', 'Tomaten', 'Tortillas', 'Joghurt-Dressing'),
+ JSON_ARRAY('Haehnchen oder Tofu anbraten.', 'Tortillas in Streifen roesten.', 'Salat und Gemuese schneiden.', 'Alles mit Dressing mischen.'), 1),
+(27, 1, 'Kartoffelgratin mit Salat', 'Cremiges Ofengericht mit frischem Beilagensalat.', 'Ofen', 'mittag,abend', 60, 4,
+ JSON_ARRAY('1 kg Kartoffeln', '250 ml Sahne', 'Knoblauch', 'Kaese', 'Muskat', 'Gruener Salat'),
+ JSON_ARRAY('Kartoffeln duenn schneiden.', 'Mit Sahne, Knoblauch und Gewuerzen schichten.', 'Mit Kaese bestreuen.', 'Backen und mit Salat servieren.'), 1),
+(28, 1, 'Couscous mit Ofenkarotten', 'Mildes vegetarisches Gericht mit Joghurtdip.', 'Vegetarisch', 'mittag,abend', 35, 4,
+ JSON_ARRAY('250 g Couscous', 'Moehren', 'Kichererbsen', 'Joghurt', 'Zitrone', 'Kreuzkuemmel'),
+ JSON_ARRAY('Moehren wuerzen und im Ofen roesten.', 'Couscous quellen lassen.', 'Kichererbsen erwaermen.', 'Mit Joghurtdip anrichten.'), 1),
+(29, 1, 'Pasta mit Erbsen-Pesto', 'Gruene Nudeln mit mildem Pesto.', 'Pasta', 'mittag,abend', 25, 4,
+ JSON_ARRAY('400 g Nudeln', '250 g Erbsen', 'Basilikum', 'Parmesan', 'Zitrone', 'Olivenoel'),
+ JSON_ARRAY('Nudeln kochen.', 'Erbsen kurz garen.', 'Erbsen mit Basilikum, Parmesan und Oel puerieren.', 'Pasta mit Pesto mischen.'), 1),
+(30, 1, 'Burger vom Blech', 'Kleine Burger zum Selbstbelegen.', 'Ofen', 'mittag,abend', 35, 4,
+ JSON_ARRAY('Burgerbroetchen', 'Patties oder vegane Patties', 'Kaese', 'Salat', 'Tomaten', 'Gurken', 'Sauce'),
+ JSON_ARRAY('Patties garen.', 'Broetchen kurz im Ofen waermen.', 'Belag vorbereiten.', 'Alles auf den Tisch stellen und belegen.'), 1),
+(31, 1, 'Rote-Linsen-Dal', 'Mildes Dal mit Reis und Joghurt.', 'Vegetarisch', 'mittag,abend', 35, 4,
+ JSON_ARRAY('250 g rote Linsen', 'Kokosmilch', 'Tomaten', 'Currypulver', 'Reis', 'Joghurt'),
+ JSON_ARRAY('Reis kochen.', 'Linsen mit Tomaten und Kokosmilch koecheln.', 'Mit Curry mild wuerzen.', 'Mit Joghurt servieren.'), 1),
+(32, 1, 'Flammkuchen', 'Knuspriger Ofenklassiker, schnell belegt.', 'Ofen', 'mittag,abend', 25, 4,
+ JSON_ARRAY('2 Flammkuchenteige', 'Schmand', 'Zwiebeln', 'Kaese', 'Optional Speck', 'Lauch'),
+ JSON_ARRAY('Teig mit Schmand bestreichen.', 'Zwiebeln und Belag verteilen.', 'Sehr heiss knusprig backen.', 'In Stuecke schneiden und teilen.'), 1)
+ON DUPLICATE KEY UPDATE
+title = VALUES(title),
+description = VALUES(description),
+category = VALUES(category),
+meal_type = VALUES(meal_type),
+duration_minutes = VALUES(duration_minutes),
+servings = VALUES(servings),
+ingredients = VALUES(ingredients),
+steps = VALUES(steps);
+
+INSERT INTO recipe_photos (recipe_id, path, original_name, mime_type) VALUES
+(6, '1/demo-haehnchen-reis.svg', 'demo-haehnchen-reis.svg', 'image/svg+xml'),
+(17, '1/demo-milchreis-kirschen.svg', 'demo-milchreis-kirschen.svg', 'image/svg+xml'),
+(18, '1/demo-quesadillas.svg', 'demo-quesadillas.svg', 'image/svg+xml'),
+(20, '1/demo-reis-erbsen-ruehrei.svg', 'demo-reis-erbsen-ruehrei.svg', 'image/svg+xml'),
+(25, '1/demo-lasagnesuppe.svg', 'demo-lasagnesuppe.svg', 'image/svg+xml'),
+(30, '1/demo-burger-vom-blech.svg', 'demo-burger-vom-blech.svg', 'image/svg+xml')
+ON DUPLICATE KEY UPDATE
+path = VALUES(path),
+original_name = VALUES(original_name),
+mime_type = VALUES(mime_type);
+
+INSERT IGNORE INTO recipe_tags (recipe_id, tag) VALUES
+(1, 'pasta'), (1, 'klassiker'), (2, 'suppe'), (2, 'vorbereiten'), (3, 'schnell'), (3, 'kinder'),
+(4, 'vegetarisch'), (4, 'reis'), (5, 'ofen'), (5, 'vegetarisch'), (6, 'pfanne'), (6, 'schnell'),
+(7, 'eintopf'), (7, 'vorbereiten'), (8, 'schnell'), (8, 'familientisch'), (9, 'ofen'), (9, 'pasta'),
+(10, 'suppe'), (10, 'schnell'), (11, 'schnell'), (11, 'kinder'), (12, 'vegetarisch'), (12, 'reis'),
+(13, 'suess'), (13, 'schnell'), (14, 'klassiker'), (14, 'vorbereiten'), (15, 'suppe'), (15, 'vegetarisch'),
+(16, 'ofen'), (16, 'kinder'), (17, 'suess'), (17, 'schnell'), (18, 'schnell'), (18, 'familientisch'),
+(19, 'pasta'), (19, 'schnell'), (20, 'reste'), (20, 'schnell'), (21, 'salat'), (21, 'sommer'),
+(22, 'pfanne'), (22, 'reste'), (23, 'vegetarisch'), (23, 'bowl'), (24, 'pfanne'), (24, 'schnell'),
+(25, 'suppe'), (25, 'pasta'), (26, 'salat'), (26, 'familientisch'), (27, 'ofen'), (27, 'klassiker'),
+(28, 'vegetarisch'), (28, 'ofen'), (29, 'pasta'), (29, 'vegetarisch'), (30, 'familientisch'), (30, 'kinder'),
+(31, 'vegetarisch'), (31, 'reis'), (32, 'ofen'), (32, 'schnell');

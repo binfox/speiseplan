@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Speiseplan">
+  <rect width="128" height="128" rx="24" fill="#fffaf1"/>
+  <path d="M24 92V58a40 40 0 0 1 80 0v34" fill="none" stroke="#eaa3a1" stroke-width="12" stroke-linecap="round"/>
+  <path d="M36 92V60a28 28 0 0 1 56 0v32" fill="none" stroke="#f4bd82" stroke-width="12" stroke-linecap="round"/>
+  <path d="M48 92V62a16 16 0 0 1 32 0v30" fill="none" stroke="#f5dc83" stroke-width="12" stroke-linecap="round"/>
+  <path d="M28 96h72" stroke="#5f9f7a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M35 23h8v30h-8zM51 23h8v30h-8zM35 38h24v8H35z" fill="#3f342b"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Burger vom Blech">
+  <rect width="900" height="600" fill="#eef8ff"/>
+  <rect x="210" y="232" width="480" height="238" rx="44" fill="#c9d7df"/>
+  <g transform="translate(280 190)">
+    <path d="M20 120c12-72 300-72 312 0z" fill="#f4bd82"/>
+    <rect x="30" y="120" width="292" height="36" rx="18" fill="#5f9f7a"/>
+    <rect x="42" y="155" width="268" height="42" rx="20" fill="#7a4c37"/>
+    <path d="M42 197h268v26H42z" fill="#f5dc83"/>
+    <path d="M32 222c20 42 268 42 288 0z" fill="#f4bd82"/>
+    <g fill="#fffaf1">
+      <circle cx="90" cy="88" r="7"/><circle cx="160" cy="70" r="7"/><circle cx="230" cy="88" r="7"/>
+    </g>
+  </g>
+  <text x="450" y="92" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="50" font-weight="800" fill="#3f342b">Burger vom Blech</text>
+</svg>

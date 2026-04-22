@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Bunte Quesadillas">
+  <rect width="900" height="600" fill="#fff9df"/>
+  <circle cx="450" cy="330" r="205" fill="#f4bd82"/>
+  <path d="M245 330a205 205 0 0 0 410 0z" fill="#f5dc83"/>
+  <path d="M280 330h340" stroke="#c98648" stroke-width="14" stroke-linecap="round"/>
+  <g fill="#5f9f7a">
+    <rect x="340" y="358" width="54" height="22" rx="10"/><rect x="495" y="382" width="70" height="22" rx="10"/>
+  </g>
+  <g fill="#d9674f">
+    <circle cx="420" cy="382" r="15"/><circle cx="575" cy="348" r="13"/>
+  </g>
+  <g fill="#fffaf1">
+    <rect x="300" y="392" width="95" height="18" rx="9"/><rect x="460" y="350" width="86" height="18" rx="9"/>
+  </g>
+  <text x="450" y="92" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="50" font-weight="800" fill="#3f342b">Bunte Quesadillas</text>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "name": "Familien-Speiseplan",
+  "short_name": "Speiseplan",
+  "start_url": "./?r=home",
+  "display": "standalone",
+  "background_color": "#fbf5ea",
+  "theme_color": "#5f9f7a",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
