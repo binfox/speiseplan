@@ -39,4 +39,5 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/recipes.php';
 require_once __DIR__ . '/planner.php';
+require_once __DIR__ . '/shopping.php';
 require_once __DIR__ . '/views.php';

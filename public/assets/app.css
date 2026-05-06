@@ -465,8 +465,10 @@ label {
 }
 
 .quick-photo {
+  display: block;
   grid-area: image;
-  width: min(100%, 230px);
+  width: 100%;
+  max-width: 230px;
   aspect-ratio: 16 / 9;
   border-radius: 8px;
   background-color: #f2e7d7;
@@ -474,6 +476,25 @@ label {
   background-repeat: no-repeat;
   background-size: cover;
   border: 1px solid var(--line);
+}
+
+.quick-photo-link,
+.planned-photo-link {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-decoration: none;
+}
+
+.quick-photo-link {
+  grid-area: image;
+}
+
+.quick-photo-link:focus-visible,
+.planned-photo-link:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 10px;
 }
 
 .quick-meal strong {
@@ -659,6 +680,10 @@ label {
   border-radius: 8px;
 }
 
+.planned-photo-link img {
+  display: block;
+}
+
 .planned p {
   margin: 0;
   color: var(--muted);
@@ -831,6 +856,63 @@ fieldset {
   border-radius: 8px;
 }
 
+.shopping-head {
+  align-items: end;
+}
+
+.shopping-entry-panel {
+  margin-bottom: 1rem;
+}
+
+.shopping-add-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: end;
+}
+
+.shopping-add-form label {
+  margin: 0;
+}
+
+.shopping-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.shopping-item {
+  margin: 0;
+}
+
+.shopping-check-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.95rem 1rem;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.shopping-checkbox {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  accent-color: var(--green);
+}
+
+.shopping-item-text {
+  min-width: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
   .topbar {
     grid-template-columns: minmax(0, auto) auto;
@@ -938,6 +1020,10 @@ fieldset {
   }
 
   .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .shopping-add-form {
     grid-template-columns: 1fr;
   }
 }

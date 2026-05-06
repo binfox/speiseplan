@@ -81,9 +81,14 @@ try {
         $user = require_login();
         $family = require_family();
         $recipeId = post_int_or_null('id');
-        $savedId = save_recipe((int)$family['id'], (int)$user['id'], $recipeId);
-        flash('success', 'Rezept gespeichert.');
-        redirect('/?r=recipe_edit&id=' . $savedId);
+        try {
+            $savedId = save_recipe((int)$family['id'], (int)$user['id'], $recipeId);
+            flash('success', 'Rezept gespeichert.');
+            redirect('/?r=recipe_edit&id=' . $savedId);
+        } catch (RuntimeException $e) {
+            flash('error', $e->getMessage());
+            redirect($recipeId !== null ? '/?r=recipe_edit&id=' . $recipeId : '/?r=recipe_new');
+        }
     }
 
     if ($route === 'recipe_archive' && request_method() === 'POST') {
@@ -109,6 +114,31 @@ try {
         delete_meal_plan((int)$family['id'], post_string('plan_date', 10), post_string('slot', 10));
         flash('success', 'Eintrag geloescht.');
         redirect('/?r=plan&week=' . rawurlencode((string)($_GET['week'] ?? '')));
+    }
+
+    if ($route === 'shopping_add' && request_method() === 'POST') {
+        require_csrf();
+        $user = require_login();
+        $family = require_family();
+        add_manual_shopping_item((int)$family['id'], (int)$user['id'], post_string('item_text', 255));
+        flash('success', 'Eintrag zur Einkaufsliste hinzugefuegt.');
+        redirect('/?r=shopping');
+    }
+
+    if ($route === 'shopping_toggle' && request_method() === 'POST') {
+        require_csrf();
+        $user = require_login();
+        $family = require_family();
+        toggle_shopping_group((int)$family['id'], (int)$user['id'], post_string('normalized_text', 255));
+        redirect('/?r=shopping');
+    }
+
+    if ($route === 'shopping_clear' && request_method() === 'POST') {
+        require_csrf();
+        $family = require_family();
+        clear_shopping_list((int)$family['id']);
+        flash('success', 'Einkaufsliste geleert.');
+        redirect('/?r=shopping');
     }
 
     if ($route === 'login') {
@@ -137,6 +167,12 @@ try {
             redirect('/?r=recipes');
         }
         render_recipe_form($family, $recipe);
+        exit;
+    }
+
+    if ($route === 'shopping') {
+        sync_shopping_list_for_family((int)$family['id']);
+        render_shopping_page($family, shopping_list_groups((int)$family['id']));
         exit;
     }
 

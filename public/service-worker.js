@@ -1,8 +1,8 @@
-const CACHE_NAME = 'speiseplan-static-v6';
+const CACHE_NAME = 'speiseplan-static-v7';
 const STATIC_ASSETS = [
   './',
   './assets/app.css',
-  './assets/app.js',
+  './assets/speiseplan.js',
   './assets/icon.svg',
   './assets/recipe-placeholder.svg',
   './manifest.webmanifest'

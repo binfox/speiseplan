@@ -3,27 +3,29 @@
 ![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4?style=flat-square&logo=php&logoColor=white)
 ![MariaDB](https://img.shields.io/badge/MariaDB%20%2F%20MySQL-PDO-003545?style=flat-square&logo=mariadb&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-Android%20%2B%20Browser-5f9f7a?style=flat-square)
-![License](https://img.shields.io/badge/License-private%20%2F%20choose%20one-lightgrey?style=flat-square)
+![License](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square)
 
 Eine kleine, selbst gehostete PHP/MariaDB-PWA fuer Familien, die ihren woechentlichen Speiseplan, Rezepte und Rezeptfotos gemeinsam verwalten wollen. Die App laeuft im Browser am PC und kann auf Android wie eine App auf den Startbildschirm gelegt werden.
 
 ## Screenshots
 
-| Mobile Schnelluebersicht | Mobile Menueansicht |
+| Mobile Schnelluebersicht | Mobile Einkaufsliste |
 | --- | --- |
-| ![Mobile Schnelluebersicht](docs/screenshots/overview-mobile.png) | ![Mobile Menueansicht](docs/screenshots/menu-mobile.png) |
+| ![Mobile Schnelluebersicht](docs/screenshots/overview-mobile.png) | ![Mobile Einkaufsliste](docs/screenshots/shopping-mobile.png) |
 
-![Login Desktop](docs/screenshots/login-desktop.png)
+![Rezeptbuch Desktop](docs/screenshots/recipes-desktop.png)
 
 ## Funktionen
 
 - **Schnelluebersicht:** mobile Startseite mit den naechsten 7 Tagen.
 - **Wochenplanung:** Mittag und Abendbrot pro Tag planen.
+- **Einkaufsliste:** manuelle Eintraege plus Zutaten aus den naechsten 7 geplanten Tagen, gruppiert und pro Zeile abhakbar.
 - **Rezeptbuch:** strukturierte Rezepte mit Zutaten, Schritten, Kategorien, Tags, Dauer und Portionen.
-- **Rezeptfotos:** Upload von JPG, PNG oder WebP; Auslieferung geschuetzt ueber die App.
+- **Rezeptfotos:** Upload aus Galerie oder Kamera als JPG, PNG oder WebP; Auslieferung geschuetzt ueber die App.
 - **Familien:** mehrere Familien/Haushalte mit getrennten Daten.
 - **Einladungscodes:** neue Nutzer treten einer Familie per Code bei.
 - **Vorschlaege:** einfache Rezeptvorschlaege aus dem eigenen Rezeptbuch.
+- **Mobile UI:** Hochformat-optimierte Startseite und Burger-Menue auf kleineren Displays.
 - **PWA:** installierbar auf Android, nutzbar im Desktop-Browser.
 - **Private Hosting:** keine Cloud-Pflicht, keine externen API-Abhaengigkeiten.
 
@@ -40,7 +42,7 @@ Keine Composer- oder Node-Abhaengigkeiten erforderlich.
 ## Projektstruktur
 
 ```text
-app/                    PHP-Logik, Views, Auth, Planner, Rezepte
+app/                    PHP-Logik, Views, Auth, Planner, Rezepte, Einkaufsliste
 config/                 Beispielkonfiguration, lokale config.php bleibt ignoriert
 database/               Schema, Seed-Daten, Migrationen
 docs/screenshots/       Bilder fuer GitHub/README
@@ -68,7 +70,7 @@ mariadb -u root -p speiseplan < database/seed.sql
 Lokalen PHP-Server starten:
 
 ```sh
-php -S 0.0.0.0:8002 -t public
+php -d upload_max_filesize=16M -d post_max_size=20M -d memory_limit=256M -S 0.0.0.0:8002 -t public
 ```
 
 Dann oeffnen:
@@ -136,6 +138,16 @@ chown -R www-data:www-data storage/uploads/recipes
 chmod -R 775 storage/uploads/recipes
 ```
 
+Foto-Uploads fuer Handy-Kamerabilder erlauben:
+
+```ini
+upload_max_filesize=16M
+post_max_size=20M
+memory_limit=256M
+```
+
+Bei PHP-FPM/CGI liegt dafuer bereits `public/.user.ini` im Projekt. Je nach Hosting greift die Aenderung erst nach kurzer Zeit oder nach einem PHP-FPM-Neustart. Beim lokalen PHP-Built-in-Server werden `.user.ini`-Dateien nicht ausgewertet, deshalb stehen die Limits im lokalen Startbefehl oben explizit mit `-d`.
+
 HTTPS aktivieren, z.B. mit Certbot:
 
 ```sh
@@ -179,6 +191,7 @@ Die App ist fuer private Nutzung gedacht und bringt grundlegende Schutzmechanism
 - geschuetzte Fotoauslieferung
 - Login-/Registrierungs-Rate-Limits
 - Security-Header
+- persistente Einkaufsliste pro Familie
 - Uploads nur fuer JPG, PNG und WebP
 
 Produktiv beachten:
@@ -195,6 +208,7 @@ Bestehende Installationen nach Sicherheitsupdates aktualisieren:
 
 ```sh
 mariadb -u speiseplan_app -p speiseplan < database/migrate_security_events.sql
+mariadb -u speiseplan_app -p speiseplan < database/migrate_shopping_list.sql
 ```
 
 ## PWA / Cache Troubleshooting
@@ -218,9 +232,9 @@ find . -name '*.php' -print0 | xargs -0 -n1 php -l
 Lokaler Server:
 
 ```sh
-php -S 127.0.0.1:8002 -t public
+php -d upload_max_filesize=16M -d post_max_size=20M -d memory_limit=256M -S 127.0.0.1:8002 -t public
 ```
 
 ## Lizenz
 
-GNU General Public License (GPL)
+Dieses Projekt steht unter der **GNU General Public License v3.0**. Details stehen in der Datei [LICENSE](LICENSE).

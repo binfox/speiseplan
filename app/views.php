@@ -33,6 +33,7 @@ function render_header(string $title): void
                 <nav class="nav">
                     <a class="<?= $route === 'home' || $route === '' ? 'active' : '' ?>" href="<?= e(url('/?r=home')) ?>">Übersicht</a>
                     <a class="<?= $route === 'plan' ? 'active' : '' ?>" href="<?= e(url('/?r=plan')) ?>">Planen</a>
+                    <a class="<?= $route === 'shopping' || str_starts_with($route, 'shopping_') ? 'active' : '' ?>" href="<?= e(url('/?r=shopping')) ?>">Einkaufen</a>
                     <a class="<?= str_starts_with($route, 'recipes') || str_starts_with($route, 'recipe') ? 'active' : '' ?>" href="<?= e(url('/?r=recipes')) ?>">Rezepte</a>
                     <a class="<?= $route === 'family' ? 'active' : '' ?>" href="<?= e(url('/?r=family')) ?>">Familie</a>
                 </nav>
@@ -57,7 +58,7 @@ function render_footer(): void
 {
     ?>
     </main>
-    <script src="<?= e(url('/assets/app.js')) ?>" defer></script>
+    <script src="<?= e(url('/assets/speiseplan.js')) ?>" defer></script>
     </body>
     </html>
     <?php
@@ -177,10 +178,17 @@ function render_home_page(array $family): void
                                 continue;
                             } ?>
                             <?php $plan = $dayPlans[$slot]; ?>
+                            <?php $recipeUrl = !empty($plan['recipe_id']) ? url('/?r=recipe_edit', ['id' => (int)$plan['recipe_id']]) : ''; ?>
                             <div class="quick-meal">
                                 <div class="quick-slot"><?= e(meal_slot_label($slot)) ?></div>
                                 <?php if (!empty($plan['photo_id'])): ?>
-                                    <div class="quick-photo" style="background-image: url('<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>')" aria-hidden="true"></div>
+                                    <?php if ($recipeUrl !== ''): ?>
+                                        <a class="quick-photo-link" href="<?= e($recipeUrl) ?>" aria-label="Rezept öffnen: <?= e($plan['recipe_title'] ?: $plan['free_text']) ?>">
+                                            <span class="quick-photo" style="background-image: url('<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>')" aria-hidden="true"></span>
+                                        </a>
+                                    <?php else: ?>
+                                        <div class="quick-photo" style="background-image: url('<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>')" aria-hidden="true"></div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                                 <div class="quick-meal-content">
                                     <strong><?= e($plan['recipe_title'] ?: $plan['free_text']) ?></strong>
@@ -246,9 +254,16 @@ function render_plan_page(array $family): void
                             <?php endif; ?>
                         </div>
                         <?php if ($plan): ?>
+                            <?php $recipeUrl = !empty($plan['recipe_id']) ? url('/?r=recipe_edit', ['id' => (int)$plan['recipe_id']]) : ''; ?>
                             <div class="planned">
                                 <?php if (!empty($plan['photo_id'])): ?>
-                                    <img src="<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>" alt="">
+                                    <?php if ($recipeUrl !== ''): ?>
+                                        <a class="planned-photo-link" href="<?= e($recipeUrl) ?>" aria-label="Rezept öffnen: <?= e($plan['recipe_title'] ?: $plan['free_text']) ?>">
+                                            <img src="<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>" alt="">
+                                        </a>
+                                    <?php else: ?>
+                                        <img src="<?= e(recipe_photo_src(['photo_id' => $plan['photo_id']])) ?>" alt="">
+                                    <?php endif; ?>
                                 <?php endif; ?>
                                 <strong><?= e($plan['recipe_title'] ?: $plan['free_text']) ?></strong>
                                 <?php if (!empty($plan['note'])): ?>
@@ -396,7 +411,9 @@ function render_recipe_form(array $family, ?array $recipe = null): void
             <input type="text" name="tags" value="<?= e($isEdit ? implode(', ', $recipe['tags']) : '') ?>">
         </label>
         <label>Foto
-            <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" capture="environment">
+            <input type="hidden" name="MAX_FILE_SIZE" value="<?= (int)app_config()['max_upload_bytes'] ?>">
+            <input type="file" name="photo" accept="image/*">
+            <span class="small">Galerie oder Kamera. Gespeichert werden JPG, PNG oder WebP bis <?= e(format_bytes((int)app_config()['max_upload_bytes'])) ?>.</span>
         </label>
         <?php if ($isEdit && !empty($recipe['photo_id'])): ?>
             <img class="current-photo" src="<?= e(recipe_photo_src($recipe)) ?>" alt="">
@@ -466,6 +483,66 @@ function render_family_page(array $family): void
             </div>
         </div>
     </section>
+    <?php
+    render_footer();
+}
+
+function render_shopping_page(array $family, array $groups): void
+{
+    [$start, $end] = shopping_window();
+    $totalCount = 0;
+    foreach ($groups as $group) {
+        $totalCount += (int)($group['item_count'] ?? 0);
+    }
+
+    render_header('Einkaufen');
+    ?>
+    <section class="page-head shopping-head">
+        <div>
+            <p class="eyebrow"><?= $totalCount ?> offene Punkte · <?= e($start->format('d.m.')) ?> bis <?= e($end->format('d.m.')) ?></p>
+            <h1>Einkaufen</h1>
+        </div>
+        <form method="post" action="<?= e(url('/?r=shopping_clear')) ?>">
+            <?= csrf_field() ?>
+            <button class="primary" type="submit" data-confirm="Die gesamte Einkaufsliste wird geleert. Fortfahren?">Alles Eingekauft</button>
+        </form>
+    </section>
+
+    <section class="panel shopping-entry-panel">
+        <form class="shopping-add-form" method="post" action="<?= e(url('/?r=shopping_add')) ?>">
+            <?= csrf_field() ?>
+            <label>
+                <span class="small">Manuell hinzufuegen</span>
+                <input type="text" name="item_text" maxlength="255" placeholder="z. B. Milch, Brot, Bananen" required>
+            </label>
+            <button class="primary" type="submit">Eintragen</button>
+        </form>
+    </section>
+
+    <?php if ($groups === []): ?>
+        <section class="empty-state">
+            <p class="eyebrow">Alles erledigt</p>
+            <h2>Gerade ist nichts auf der Einkaufsliste.</h2>
+        </section>
+    <?php else: ?>
+        <section class="shopping-list" aria-label="Einkaufsliste">
+            <?php foreach ($groups as $group): ?>
+                <?php
+                $count = (int)($group['item_count'] ?? 0);
+                $itemText = (string)($group['item_text'] ?? '');
+                $displayText = $count > 1 ? $count . 'x ' . $itemText : $itemText;
+                ?>
+                <form class="shopping-item" method="post" action="<?= e(url('/?r=shopping_toggle')) ?>">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="normalized_text" value="<?= e((string)($group['normalized_text'] ?? '')) ?>">
+                    <label class="shopping-check-row">
+                        <input class="shopping-checkbox" type="checkbox" value="1" data-autosubmit aria-label="Als eingekauft markieren: <?= e($displayText) ?>">
+                        <span class="shopping-item-text"><?= e($displayText) ?></span>
+                    </label>
+                </form>
+            <?php endforeach; ?>
+        </section>
+    <?php endif; ?>
     <?php
     render_footer();
 }

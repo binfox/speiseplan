@@ -12,5 +12,5 @@ return [
     'force_https' => false,
     'upload_dir' => dirname(__DIR__) . '/storage/uploads/recipes',
     'upload_url' => '/uploads/recipes',
-    'max_upload_bytes' => 5 * 1024 * 1024,
+    'max_upload_bytes' => 16 * 1024 * 1024,
 ];

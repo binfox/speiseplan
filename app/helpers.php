@@ -25,6 +25,21 @@ function e(?string $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+function format_bytes(int $bytes): string
+{
+    if ($bytes >= 1024 * 1024) {
+        $value = $bytes / (1024 * 1024);
+        return rtrim(rtrim(number_format($value, 1, ',', ''), '0'), ',') . ' MB';
+    }
+
+    if ($bytes >= 1024) {
+        $value = $bytes / 1024;
+        return rtrim(rtrim(number_format($value, 1, ',', ''), '0'), ',') . ' KB';
+    }
+
+    return $bytes . ' Byte';
+}
+
 function redirect(string $path): never
 {
     header('Location: ' . url($path));
@@ -100,11 +115,46 @@ function csrf_field(): string
 
 function require_csrf(): void
 {
+    if (post_body_exceeds_php_limit()) {
+        http_response_code(413);
+        exit('Upload ist zu gross. Bitte post_max_size auf dem Server erhoehen oder ein kleineres Foto auswaehlen.');
+    }
+
     $token = $_POST['csrf_token'] ?? '';
     if (!is_string($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
         http_response_code(419);
         exit('Ungueltige Anfrage.');
     }
+}
+
+function post_body_exceeds_php_limit(): bool
+{
+    if (request_method() !== 'POST' || $_POST !== []) {
+        return false;
+    }
+
+    $contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+    $postMaxBytes = ini_size_to_bytes((string)ini_get('post_max_size'));
+
+    return $contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes;
+}
+
+function ini_size_to_bytes(string $value): int
+{
+    $value = trim($value);
+    if ($value === '') {
+        return 0;
+    }
+
+    $unit = strtolower(substr($value, -1));
+    $number = (float)$value;
+
+    return (int)match ($unit) {
+        'g' => $number * 1024 * 1024 * 1024,
+        'm' => $number * 1024 * 1024,
+        'k' => $number * 1024,
+        default => $number,
+    };
 }
 
 function client_ip(): string

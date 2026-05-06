@@ -172,20 +172,29 @@ function replace_recipe_tags(int $recipeId, string $tagText): void
 
 function handle_recipe_photo_upload(int $familyId, int $recipeId): void
 {
-    if (empty($_FILES['photo']['tmp_name']) || !is_uploaded_file($_FILES['photo']['tmp_name'])) {
+    if (!isset($_FILES['photo']) || !is_array($_FILES['photo'])) {
         return;
     }
 
-    if (($_FILES['photo']['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-        throw new RuntimeException('Foto konnte nicht hochgeladen werden.');
+    $error = (int)($_FILES['photo']['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($error === UPLOAD_ERR_NO_FILE) {
+        return;
+    }
+
+    if ($error !== UPLOAD_ERR_OK) {
+        throw new RuntimeException(upload_error_message($error));
+    }
+
+    $tmp = (string)($_FILES['photo']['tmp_name'] ?? '');
+    if ($tmp === '' || !is_uploaded_file($tmp)) {
+        throw new RuntimeException('Foto konnte nicht verarbeitet werden. Bitte erneut auswaehlen.');
     }
 
     $config = app_config();
     if ((int)($_FILES['photo']['size'] ?? 0) > (int)$config['max_upload_bytes']) {
-        throw new RuntimeException('Foto ist zu gross.');
+        throw new RuntimeException('Foto ist zu gross. Erlaubt sind maximal ' . format_bytes((int)$config['max_upload_bytes']) . '.');
     }
 
-    $tmp = (string)$_FILES['photo']['tmp_name'];
     $mime = mime_content_type($tmp) ?: '';
     $allowed = [
         'image/jpeg' => ['extension' => 'jpg', 'format' => 'jpeg'],
@@ -215,6 +224,18 @@ function handle_recipe_photo_upload(int $familyId, int $recipeId): void
     $stmt->execute([$recipeId, $relativePath, (string)($_FILES['photo']['name'] ?? ''), $mime]);
 }
 
+function upload_error_message(int $error): string
+{
+    return match ($error) {
+        UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Foto ist zu gross. Bitte PHP upload_max_filesize und post_max_size auf dem Server erhoehen oder ein kleineres Foto auswaehlen.',
+        UPLOAD_ERR_PARTIAL => 'Foto wurde nur teilweise hochgeladen. Bitte erneut versuchen.',
+        UPLOAD_ERR_NO_TMP_DIR => 'Serverfehler: Temporaerer Upload-Ordner fehlt.',
+        UPLOAD_ERR_CANT_WRITE => 'Serverfehler: Foto konnte nicht auf die Festplatte geschrieben werden.',
+        UPLOAD_ERR_EXTENSION => 'Serverfehler: Eine PHP-Erweiterung hat den Upload gestoppt.',
+        default => 'Foto konnte nicht hochgeladen werden.',
+    };
+}
+
 function rewrite_uploaded_image(string $source, string $target, string $format): bool
 {
     if (!extension_loaded('gd')) {
@@ -237,6 +258,12 @@ function rewrite_uploaded_image(string $source, string $target, string $format):
         return false;
     }
 
+    if ($format === 'jpeg') {
+        $image = orient_jpeg_image($source, $image);
+    }
+
+    $image = resize_image_to_max_dimension($image, 1600, $format);
+
     $ok = match ($format) {
         'jpeg' => imagejpeg($image, $target, 85),
         'png' => imagepng($image, $target, 6),
@@ -245,6 +272,60 @@ function rewrite_uploaded_image(string $source, string $target, string $format):
     };
     imagedestroy($image);
     return $ok;
+}
+
+function orient_jpeg_image(string $source, GdImage $image): GdImage
+{
+    if (!function_exists('exif_read_data')) {
+        return $image;
+    }
+
+    $exif = @exif_read_data($source);
+    $orientation = is_array($exif) ? (int)($exif['Orientation'] ?? 1) : 1;
+    $rotated = match ($orientation) {
+        3 => imagerotate($image, 180, 0),
+        6 => imagerotate($image, -90, 0),
+        8 => imagerotate($image, 90, 0),
+        default => false,
+    };
+
+    if (!$rotated) {
+        return $image;
+    }
+
+    imagedestroy($image);
+    return $rotated;
+}
+
+function resize_image_to_max_dimension(GdImage $image, int $maxDimension, string $format): GdImage
+{
+    $width = imagesx($image);
+    $height = imagesy($image);
+    $largest = max($width, $height);
+
+    if ($largest <= $maxDimension || $largest < 1) {
+        return $image;
+    }
+
+    $scale = $maxDimension / $largest;
+    $targetWidth = max(1, (int)round($width * $scale));
+    $targetHeight = max(1, (int)round($height * $scale));
+    $resized = imagecreatetruecolor($targetWidth, $targetHeight);
+
+    if ($format === 'png' || $format === 'webp') {
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+        imagefilledrectangle($resized, 0, 0, $targetWidth, $targetHeight, $transparent);
+    }
+
+    if (!imagecopyresampled($resized, $image, 0, 0, 0, 0, $targetWidth, $targetHeight, $width, $height)) {
+        imagedestroy($resized);
+        return $image;
+    }
+
+    imagedestroy($image);
+    return $resized;
 }
 
 function archive_recipe(int $familyId, int $recipeId): void

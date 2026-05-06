@@ -38,3 +38,9 @@ document.addEventListener('keydown', (event) => {
   toggle?.setAttribute('aria-expanded', 'false');
   toggle?.setAttribute('aria-label', 'Menü öffnen');
 });
+
+document.addEventListener('change', (event) => {
+  const field = event.target.closest('[data-autosubmit]');
+  if (!field) return;
+  field.form?.requestSubmit();
+});
